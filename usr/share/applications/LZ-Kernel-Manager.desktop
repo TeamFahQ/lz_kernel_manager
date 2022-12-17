@@ -10,5 +10,5 @@ Exec=lzkm
 Terminal=true
 StartupNotify=false
 Type=Application
-Categories=Programming;
+Categories=GTK;Development;IDE;Programming;
 Name[en_US]=LZ-Kernel-Manager

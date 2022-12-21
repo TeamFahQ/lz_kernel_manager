@@ -66,7 +66,7 @@ Install () { pass=$(zenity --password --title="sudo password prompt" --timeout=1
     echo $pass | sudo -S ls /tmp > /dev/null 2>&1
     sudo dpkg -i *.deb
     mv *.deb Installed
-    rm linux-upstream_6.0*
+    rm linux-upstream_*
 echo Sign kernel?
     select yn in "yes" "no"; do
         case $yn in

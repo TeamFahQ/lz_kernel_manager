@@ -17,7 +17,7 @@ ans=$(zenity --icon-name=icons8-linux-50 --info --title "Kernel Maintainer by Th
 --ok-label="Cancel" --extra-button="Update-config" --width 310);
 
 # Fetch latest commits
-Sync () { cd $tree && git pull $ksource $vbase
+Sync () { cd $tree && git pull $ksource $branch
 # Return to kernel menu
 zenity --question --text "Anything else?"
     kernel=$?
@@ -80,7 +80,7 @@ Reboot () { pass=$(zenity --password --title="sudo password prompt" --timeout=10
 echo $pass | sudo -S ls /tmp > /dev/null 2>&1 && sudo reboot now
 }
 
-Push () { cd $tree && git push $remote $vbase && return
+Push () { cd $tree && git push $remote $branch && return
 }
 
 open_dir () { nemo $tree
@@ -127,18 +127,18 @@ echo tree=$tree >> lzkm.conf
 echo "Enter kernel version"
 read vbase
 echo vbase=$vbase >> lzkm.conf
-echo "Your git remote branch. ie
-origin
-(Only put your remote. This assumes your branch is the same as the kernel version)"
+echo "Enter kernel branch. We are goign to assume your local branch and upstream branch is the same."
+read branch
+echo branch=$branch >> lzkm.conf
+echo "Local git remote branch. ie, origin (Only put your remote.)"
 read remote
 echo remote=$remote >> lzkm.conf
-echo "Your upstream (source) remote branch
-(Only put upstream remote. This assumes the branch is the same as the kernel version)"
+echo "Your upstream (source) remote branch (Only put upstream remote.)"
 read ksource
 echo ksource=$ksource >> lzkm.conf
 echo Inputing some basic parameters into config
 echo "" >> lzkm.conf
-cat lzcolordef >> lzkm.conf
+cat /usr/local/bin/lzcolordef >> lzkm.conf
 echo and done!
 echo "lzkm.conf to /etc"
 sudo mv lzkm.conf /etc

@@ -1,5 +1,5 @@
 Package: lz-kernel-manager
-Version: 1.1
+Version: 1.2
 Architecture: amd64
 Maintainer: Thomas R
 Description: A simple set of sripts using zenity to help organize them. This set of scripts is meant to help manage custom kernel builds. You can sync with upstream, push your changes to your personal repo, build, install, sign the kernal and modles, and even reboot. Some functions require root password, so I have included a password prompt.

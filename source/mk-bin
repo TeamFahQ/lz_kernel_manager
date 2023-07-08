@@ -3,7 +3,7 @@
 shc -f lzkm 
 shc -f lzkmconfig
 
-pack=/media/thomas/Dev/applications/lz_kernel_manager/lz_kernel_manager/usr/local/bin
+pack=/media/thomas/Dev/applications/lz_kernel_manager/lz_kernel_manager_1.2/usr/local/bin
 cp lzkm.x $pack/lzkm
 cp lzkmconfig.x $pack/lzkmconfig
 cp lzcolordef $pack/lzcolordef
@@ -11,4 +11,4 @@ rm *.x.c
 rm *.x
 
 cd /media/thomas/Dev/applications/lz_kernel_manager
-dpkg-deb --build --root-owner-group lz_kernel_manager
+dpkg-deb --build --root-owner-group lz_kernel_manager_1.2

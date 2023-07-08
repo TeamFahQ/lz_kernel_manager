@@ -1,0 +1,135 @@
+#!/bin/bash
+
+# Check for lzkm.conf. If not exist (first run) then create one.
+config=/etc/lzkm.conf
+if [ -f "$config" ]; then
+    source /etc/lzkm.conf
+else
+    lzkmconfig && source /etc/lzkm.conf
+fi
+
+# Fetch latest commits
+Sync () { cd $tree && git pull $ksource $vbase
+}
+
+# Build the kernel
+Build () { reset
+cd $tree
+    clean () { make clean && make mrproper 
+    }
+    dirty () { echo "Dirty build!"
+    }
+    echo "What build to run?"
+    select ynq in "clean" "dirty" "quit"; do
+        case $ynq in
+    	clean ) clean ;break;;
+    	dirty ) dirty ;break;;
+    	quit ) echo Bye! ;exit;;
+        esac;
+    done
+# Number of cores to be used
+export CONCURRENCY_LEVEL=$(nproc --all)
+echo "${bldblu}${txtbld}Using $CONCURRENCY_LEVEL cores${txtrst}"
+    make oldconfig && make prepare
+    time make CC="ccache gcc" deb-pkg -j $(nproc --all)
+# Saving the new build config
+    if [ ! -d "configs" ];
+    then
+    mkdir ./configs && echo "${bldred}${txtbld}Created configs directory to store config file${txtrst}"
+    fi
+    cp .config configs/.config
+    }
+
+# Open kernel Install
+Install () { pass=$(zenity --password --title="sudo password prompt" --timeout=10);
+    cd $base
+    echo $pass | sudo -S ls /tmp > /dev/null 2>&1
+    sudo dpkg -i *.deb
+    mv *.deb Installed
+    rm linux-upstream_*
+echo Sign kernel?
+    select yn in "yes" "no"; do
+        case $yn in
+    	yes ) sign ;break;;
+    	no ) return ;exit;;
+        esac;
+    done
+}
+
+Reboot () { pass=$(zenity --password --title="sudo password prompt" --timeout=10)
+echo $pass | sudo -S ls /tmp > /dev/null 2>&1 && sudo reboot now
+}
+
+Push () { cd $tree && git push $remote $vbase && return
+}
+
+open_dir () { nemo $tree
+}
+
+sign () { echo Signing kernel
+    echo ${bldblu}${txtbld}Which version?${txtrst}
+    read VERSION
+    echo ${bldred}Sigining kernel
+    cd ~/.keys
+    sudo sbsign --key MOK.priv --cert MOK.pem /boot/vmlinuz-$vbase.$VERSION \
+     --output /boot/vmlinuz-$vbase.$VERSION.signed
+    sudo cp /boot/initrd.img-$vbase.$VERSION{,.signed}
+    echo signed ${txtrst}
+    sudo -v
+    echo "Signing the following modules"
+    for filename in /lib/modules/$(uname -r)/updates/dkms/*.ko; do
+        sudo /usr/src/linux-headers-$(uname -r)/scripts/sign-file sha256 ~/.keys/MOK.priv ~/.keys/MOK.der $filename
+        echo "$filename"
+    done
+    #Remove unsigned
+    sudo mv /boot/vmlinuz-$vbase.$VERSION{.signed,}
+    sudo mv /boot/initrd.img-$vbase.$VERSION{.signed,}
+    sudo update-grub
+    sudo update-initramfs -ck all
+}
+
+Update-config () { source lzcolordef
+echo ${bldblu}${txtbld}"If this is your first run, We'll need to do some setup here to create the config file"
+echo "You'll need to add the following:
+${bldred}KERNEL BASE PATH${bldblu}${txtbld}, i.e. 1 directory before the actual tree. /home/source/kernel
+${bldred}FULL PATH TO KERNEL${bldblu}${txtbld}, i.e. /home/source/kernel/6.0
+${bldred}KERNEL VERSION${bldblu}${txtbld}, i.e. 5.19 6.0
+${bldred}YOUR REMOTE/BRANCH${bldblu}${txtbld}, if you track changes, otherwise it can be left blank at the prompt
+${bldred}UPSTEAM${bldblu}${txtbld}, remote/branch"${txtrst}
+read -p "Press enter to continue"
+echo "Enter kernel base path" 
+read base
+echo base=$base > lzkm.conf
+echo "Enter full kernel path"
+read tree
+echo tree=$tree >> lzkm.conf
+echo "Enter kernel version"
+read vbase
+echo vbase=$vbase >> lzkm.conf
+echo "Your git remote branch. ie
+origin
+(Only put your remote. This assumes your branch is the same as the kernel version)"
+read remote
+echo remote=$remote >> lzkm.conf
+echo "Your upstream (source) remote branch
+(Only put upstream remote. This assumes the branch is the same as the kernel version)"
+read ksource
+echo ksource=$ksource >> lzkm.conf
+echo Inputing some basic parameters into config
+echo "" >> lzkm.conf
+cat lzcolordef >> lzkm.conf
+echo and done!
+echo "lzkm.conf to /etc"
+sudo mv lzkm.conf /etc
+source /etc/lzkm.conf
+}
+
+return () { # Return to kernel menu
+    zenity --question --text "Anything else?"
+        kernel=$?
+        if [[ $kernel -eq 0 ]]; then
+            lzkm
+        fi
+}
+
+$1 $2 $3 $4 $5 $6 $7 $8

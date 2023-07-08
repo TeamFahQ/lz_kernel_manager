@@ -1,0 +1,102 @@
+[1mdiff --git a/lz_kernel_manager.deb b/lz_kernel_manager.deb[m
+[1mdeleted file mode 100644[m
+[1mindex 6159686..0000000[m
+Binary files a/lz_kernel_manager.deb and /dev/null differ
+[1mdiff --git a/lz_kernel_manager/DEBIAN/control b/lz_kernel_manager/DEBIAN/control[m
+[1mdeleted file mode 100644[m
+[1mindex e8f534e..0000000[m
+[1m--- a/lz_kernel_manager/DEBIAN/control[m
+[1m+++ /dev/null[m
+[36m@@ -1,5 +0,0 @@[m
+[31m-Package: lz-kernel-manager[m
+[31m-Version: 1.1[m
+[31m-Architecture: amd64[m
+[31m-Maintainer: Thomas R[m
+[31m-Description: A simple set of sripts using zenity to help organize them. This set of scripts is meant to help manage custom kernel builds. You can sync with upstream, push your changes to your personal repo, build, install, sign the kernal and modles, and even reboot. Some functions require root password, so I have included a password prompt.[m
+[1mdiff --git a/lz_kernel_manager/usr/local/bin/lzcolordef b/lz_kernel_manager/usr/local/bin/lzcolordef[m
+[1mdeleted file mode 100644[m
+[1mindex fb43b9d..0000000[m
+[1m--- a/lz_kernel_manager/usr/local/bin/lzcolordef[m
+[1m+++ /dev/null[m
+[36m@@ -1,7 +0,0 @@[m
+[31m-# Colors[m
+[31m-bldred=${txtbld}$(tput setaf 1) #  red[m
+[31m-bldblu=${txtbld}$(tput setaf 4) #  blue[m
+[31m-txtbld=$(tput bold)             # Bold[m
+[31m-txtrst=$(tput sgr0)             # Reset[m
+[31m-[m
+[31m-export CONCURRENCY_LEVEL=$(nproc --all)[m
+[1mdiff --git a/lz_kernel_manager/usr/local/bin/lzkm b/lz_kernel_manager/usr/local/bin/lzkm[m
+[1mdeleted file mode 100755[m
+[1mindex 6a3f9be..0000000[m
+Binary files a/lz_kernel_manager/usr/local/bin/lzkm and /dev/null differ
+[1mdiff --git a/lz_kernel_manager/usr/local/bin/lzkmconfig b/lz_kernel_manager/usr/local/bin/lzkmconfig[m
+[1mdeleted file mode 100755[m
+[1mindex fd67a07..0000000[m
+Binary files a/lz_kernel_manager/usr/local/bin/lzkmconfig and /dev/null differ
+[1mdiff --git a/lz_kernel_manager/usr/share/applications/LZ-Kernel-Manager.desktop b/lz_kernel_manager/usr/share/applications/LZ-Kernel-Manager.desktop[m
+[1mdeleted file mode 100755[m
+[1mindex 61b0a22..0000000[m
+[1m--- a/lz_kernel_manager/usr/share/applications/LZ-Kernel-Manager.desktop[m
+[1m+++ /dev/null[m
+[36m@@ -1,14 +0,0 @@[m
+[31m-#!/usr/bin/env xdg-open[m
+[31m-[m
+[31m-[Desktop Entry][m
+[31m-Version=1.0[m
+[31m-Type=Application[m
+[31m-Name=LZ-Kernel-Manager[m
+[31m-GenericName=LZ-Kernel-Manager[m
+[31m-Icon=/home/thomas/.icons/icons8-linux-50.png[m
+[31m-Exec=lzkm[m
+[31m-Terminal=true[m
+[31m-StartupNotify=false[m
+[31m-Type=Application[m
+[31m-Categories=GTK;Development;IDE;Programming;[m
+[31m-Name[en_US]=LZ-Kernel-Manager[m
+[1mdiff --git a/source/mk-bin b/source/mk-bin[m
+[1mindex 371fe6a..4ba8cec 100755[m
+[1m--- a/source/mk-bin[m
+[1m+++ b/source/mk-bin[m
+[36m@@ -3,7 +3,7 @@[m
+ shc -f lzkm [m
+ shc -f lzkmconfig[m
+ [m
+[31m-pack=/media/thomas/Dev/applications/lz_kernel_manager/lz_kernel_manager/usr/local/bin[m
+[32m+[m[32mpack=/media/thomas/Dev/applications/lz_kernel_manager/lz_kernel_manager_1.2/usr/local/bin[m
+ cp lzkm.x $pack/lzkm[m
+ cp lzkmconfig.x $pack/lzkmconfig[m
+ cp lzcolordef $pack/lzcolordef[m
+[36m@@ -11,4 +11,4 @@[m [mrm *.x.c[m
+ rm *.x[m
+ [m
+ cd /media/thomas/Dev/applications/lz_kernel_manager[m
+[31m-dpkg-deb --build --root-owner-group lz_kernel_manager[m
+[32m+[m[32mdpkg-deb --build --root-owner-group lz_kernel_manager_1.2[m
+[1mdiff --git a/source/old/lz-km-sign b/source/old/lz-km-sign[m
+[1mindex 15223ae..3e18c29 100755[m
+[1m--- a/source/old/lz-km-sign[m
+[1m+++ b/source/old/lz-km-sign[m
+[36m@@ -7,9 +7,9 @@[m [mread VERSION[m
+ echo ${bldred}Sigining kernel[m
+ cd ~/.keys[m
+ [m
+[31m-sudo sbsign --key MOK.priv --cert MOK.pem /boot/vmlinuz-$vbase.$VERSION-lz-xan1 --output /boot/vmlinuz-$vbase.$VERSION-lz-xan1.signed[m
+[32m+[m[32msudo sbsign --key MOK.priv --cert MOK.pem /boot/vmlinuz-5.15.0-56-generic --output /boot/vmlinuz-5.15.0-56-generic.signed[m
+ [m
+[31m-sudo cp /boot/initrd.img-$vbase.$VERSION-lz-xan1{,.signed}[m
+[32m+[m[32msudo cp /boot/initrd.img-5.15.0-56-generic{,.signed}[m
+ echo signed ${txtrst}[m
+ [m
+ sudo -v[m
+[36m@@ -20,8 +20,8 @@[m [mfor filename in /lib/modules/$(uname -r)/updates/dkms/*.ko; do[m
+ done[m
+ [m
+ #Remove unsigned[m
+[31m-sudo mv /boot/vmlinuz-$vbase.$VERSION-lz-xan1{.signed,}[m
+[31m-sudo mv /boot/initrd.img-$vbase.$VERSION-lz-xan1{.signed,}[m
+[32m+[m[32msudo mv /boot/vmlinuz-5.15.0-56-generic{.signed,}[m
+[32m+[m[32msudo mv /boot/initrd.img-5.15.0-56-generic{.signed,}[m
+ sudo update-grub[m
+ sudo update-initramfs -ck all[m
+ [m

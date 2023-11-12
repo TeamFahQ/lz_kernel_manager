@@ -76,8 +76,7 @@ echo Sign kernel?
     done
 }
 
-Reboot () { pass=$(zenity --password --title="sudo password prompt" --timeout=10)
-echo $pass | sudo -S ls /tmp > /dev/null 2>&1 && sudo reboot now
+Reboot () { echo $pass | sudo -S ls /tmp > /dev/null 2>&1 && sudo reboot now
 }
 
 Push () { cd $tree && git push $remote $branch && return

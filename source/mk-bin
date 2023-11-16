@@ -12,3 +12,4 @@ rm *.x
 
 cd /media/thomas/Dev/applications/lz_kernel_manager
 dpkg-deb --build --root-owner-group lz_kernel_manager_1.3
+mv *.deb Releases 

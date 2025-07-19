@@ -27,3 +27,8 @@ Download the latest release here https://github.com/TeamFahQ/lz_kernel_manager/t
 Please don't hesitate to post any issues. For features and suggestions, you can use the issues but please add 
 **[FEATURE REQUST]** to your title.
 
+NOTE:
+If you try to run lzkm, and it fails with an output like:
+lzkm: �+��Q�8�q��6+��_�Hu�sx�\L&60$,%f�'?O^�!+E���o�^s
+Install the shell script version
+

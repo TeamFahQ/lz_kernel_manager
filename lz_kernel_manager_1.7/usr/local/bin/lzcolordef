@@ -1,0 +1,7 @@
+# Colors
+bldred=${txtbld}$(tput setaf 1) #  red
+bldblu=${txtbld}$(tput setaf 4) #  blue
+txtbld=$(tput bold)             # Bold
+txtrst=$(tput sgr0)             # Reset
+
+export CONCURRENCY_LEVEL=$(nproc --all)

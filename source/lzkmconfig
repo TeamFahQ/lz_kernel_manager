@@ -39,7 +39,7 @@ echo ksource=$ksource >> lzkm.conf
 
 echo Inputing some basic parameters into config
 echo "" >> lzkm.conf
-/usr/local/bin/lzcolordef >> lzkm.conf
+cat /usr/local/bin/lzcolordef >> lzkm.conf
 echo and done!
 
 echo "lzkm.conf to /etc"

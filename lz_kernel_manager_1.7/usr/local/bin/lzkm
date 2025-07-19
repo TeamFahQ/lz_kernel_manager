@@ -1,0 +1,162 @@
+#!/bin/bash
+
+# Check for lzkm.conf. If does not exist (first run) then create one.
+config=/etc/lzkm.conf
+if [ -f "$config" ]; then
+    source /etc/lzkm.conf
+else
+    lzkmconfig && source /etc/lzkm.conf
+fi
+
+#zenity --info
+ans=$(zenity --icon=icons8-linux-50 --info --title "Kernel Maintainer by Thomas R" --text "Select a function" \
+--extra-button="Reboot" --extra-button="Update-config" --extra-button="Sign-Kernel" --extra-button="Push" \
+--extra-button="Change Log" --extra-button="Install" --extra-button="Build" --extra-button="Sync" \
+--ok-label="Cancel");
+
+# Fetch latest commits
+Sync () { cd $tree && git pull $ksource $branch
+# Return to kernel menu
+zenity --question --text "Anything else?"
+    kernel=$?
+    if [[ $kernel -eq 0 ]]; then
+        lzkm
+    fi
+}
+
+# Build the kernel
+Build () { reset
+cd $tree
+    clean () { make clean && make mrproper 
+    }
+    dirty () { echo "Dirty build!"
+    }
+    echo "What build to run?"
+    select ynq in "clean" "dirty" "quit"; do
+        case $ynq in
+    	clean ) clean ;break;;
+    	dirty ) dirty ;break;;
+    	quit ) echo Bye! ;exit;;
+        esac;
+    done
+# Number of cores to be used
+export CONCURRENCY_LEVEL=$(nproc --all)
+echo "${bldblu}${txtbld}Using $CONCURRENCY_LEVEL cores${txtrst}"
+    make oldconfig && make prepare
+    time make CC="ccache gcc" deb-pkg -j $(nproc --all)
+# Saving the new build config
+    if [ ! -d "configs" ];
+    then
+    mkdir ./configs && echo "${bldred}${txtbld}Created configs directory to store config file${txtrst}"
+    fi
+    cp .config configs/.config
+# Return to kernel menu
+    zenity --question --text "Anything else?"
+        kernel=$?
+        if [[ $kernel -eq 0 ]]; then
+            lzkm
+        fi
+    }
+
+# Kernel Install
+Install () { pass=$(zenity --password --title="sudo password prompt" --timeout=10);
+    cd $base
+    echo $pass | sudo -S ls /tmp > /dev/null 2>&1
+    sudo dpkg -i *.deb
+    mv *.deb Installed
+    rm linux-upstream_*
+echo Sign kernel?
+    select yn in "yes" "no"; do
+        case $yn in
+    	yes ) sign ;break;;
+    	no ) return ;exit;;
+        esac;
+    done
+}
+
+Reboot () { echo $pass | sudo -S ls /tmp > /dev/null 2>&1 && sudo reboot now
+}
+
+# Make the changelog
+changelog () { cd $tree
+echo Clean tree?
+    select yn in "yes" "no"; do
+        case $yn in
+    	yes ) make clean && make mrproper ;break;;
+    	no ) return ;exit;;
+        esac;
+    done
+./changelog.mk
+    echo ${bldblu}${txtbld}Which update?${txtrst}
+read UPDATE
+git add -A
+git commit -m $UPDATE
+return
+}
+
+Push () { cd $tree && git push $remote $branch && return
+}
+
+sign () { echo Signing kernel
+    echo ${bldblu}${txtbld}Which version?${txtrst}
+    read VERSION
+    echo ${bldred}Sigining kernel
+    cd ~/.keys
+    sudo sbsign --key MOK.priv --cert MOK.pem /boot/vmlinuz-$vbase.$VERSION \
+     --output /boot/vmlinuz-$vbase.$VERSION.signed
+    sudo cp /boot/initrd.img-$vbase.$VERSION{,.signed}
+    echo signed ${txtrst}
+    sudo -v
+    echo "Signing the following modules"
+    for filename in /lib/modules/$vbase.$VERSION/updates/dkms/*.ko; do
+        sudo /usr/src/linux-headers-$vbase.$VERSION/scripts/sign-file sha256 ~/.keys/MOK.priv ~/.keys/MOK.der $filename
+        echo "$filename"
+    done
+    #Remove unsigned
+    sudo mv /boot/vmlinuz-$vbase.$VERSION{.signed,}
+    sudo mv /boot/initrd.img-$vbase.$VERSION{.signed,}
+    sudo update-grub
+    sudo update-initramfs -ck all
+return
+}
+
+Update-config () { pass=$(zenity --password --title="sudo password prompt" --timeout=10);
+    echo $pass | sudo -S ls /tmp > /dev/null 2>&1
+    echo ${bldred}${txtbld}"WARNING! Only run this command once per session!"
+    echo ${bldblu}${txtbld}Which editor?${txtrst}
+        read -r editor
+    if type "$editor" >/dev/null 2>&1; then
+       sudo "$editor" /etc/lzkm.conf
+    else
+       echo "$editor no such file or directory!" >&2
+   exit
+   fi
+   source /etc/lzkm.conf
+   lzkm
+}
+
+return () { # Return to kernel menu
+    zenity --question --text "Anything else?"
+        kernel=$?
+        if [[ $kernel -eq 0 ]]; then
+            lzkm
+        fi
+}
+
+if [[ $ans == Sync ]]; then
+	Sync
+elif [[ $ans == Build ]]; then
+	Build
+elif [[ $ans == Install ]]; then
+	Install
+elif [[ $ans == "Change Log" ]]; then
+	changelog
+elif [[ $ans == Reboot ]]; then
+	Reboot
+elif [[ $ans == Push ]]; then
+	Push
+elif [[ $ans == "Sign-Kernel" ]]; then
+	sign
+elif [[ $ans == "Update-config" ]]; then
+	Update-config
+fi

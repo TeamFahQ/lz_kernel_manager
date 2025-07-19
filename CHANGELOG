@@ -1,4 +1,9 @@
-35947aa Thomas Raines 2024-10-08 Update:1.6
+596befe Thomas Raines 2025-07-19 v1.7
+88c83e7 Thomas Raines 2025-07-26 Rearrange more buttons.
+c2e79a2 Thomas Raines 2025-07-19 Update script for zenity 4.0.1
+563d7d7 Thomas Raines 2025-07-19 lzkmconfig:fix issue of clor scheme not being added to config file
+0a69f29 Thomas Raines 2025-07-19 Switching to  bash script due to binary crashing randomly See notes in README for more info
+545fd92 Thomas Raines 2024-10-08 Update:1.6
 ee58551 Thomas Raines 2024-10-08 Module signing:Sign newly installed modules instead of modules of currently running kernel...
 5e37222 Thomas Raines 2024-07-28 v1.5:Switch update-config function to allow editing in text editor; i.e. nano, xed, etc. I found this to be easier than resetting the entire lzkm.conf
 8d55615 Thomas Raines 2024-07-08 v1.4 final

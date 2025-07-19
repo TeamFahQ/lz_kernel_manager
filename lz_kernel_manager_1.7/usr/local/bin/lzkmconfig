@@ -1,0 +1,49 @@
+#!/bin/bash
+
+source lzcolordef
+echo ${bldblu}${txtbld}"If this is your first run, We'll need to do some setup here to create the config file"
+echo "You'll need to add the following:
+${bldred}KERNEL BASE PATH${bldblu}${txtbld}, i.e. 1 directory before the actual tree. /home/source/kernel
+${bldred}FULL PATH TO KERNEL${bldblu}${txtbld}, i.e. /home/source/kernel/6.0
+${bldred}KERNEL VERSION${bldblu}${txtbld}, i.e. 5.19 6.0
+${bldred}YOUR REMOTE and BRANCH${bldblu}${txtbld}, if you track changes, otherwise it can be left blank at the prompt
+${bldred}UPSTEAM${bldblu}${txtbld}, remote. and assume upstream branch is the same as your local branch"${txtrst}
+read -p "Press enter to continue"
+
+echo "Enter kernel base path" 
+read base
+echo base=$base > lzkm.conf
+
+echo "Enter full kernel path"
+read tree
+echo tree=$tree >> lzkm.conf
+
+echo "Enter kernel version"
+read vbase
+echo vbase=$vbase >> lzkm.conf
+
+echo "Enter kernel branch. We are goign to assume your local branch and upstream branch is the same."
+read branch
+echo branch=$branch >> lzkm.conf
+
+echo "Local git remote branch. ie
+origin
+(Only put your remote.)"
+read remote
+echo remote=$remote >> lzkm.conf
+
+echo "Your upstream (source) remote branch
+(Only put upstream remote.)"
+read ksource
+echo ksource=$ksource >> lzkm.conf
+
+echo Inputing some basic parameters into config
+echo "" >> lzkm.conf
+cat /usr/local/bin/lzcolordef >> lzkm.conf
+echo and done!
+
+echo "lzkm.conf to /etc"
+sudo mv lzkm.conf /etc
+source /etc/lzkm.conf
+
+lzkm

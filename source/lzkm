@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Check for lzkm.conf. If not exist (first run) then create one.
+# Check for lzkm.conf. If does not exist (first run) then create one.
 config=/etc/lzkm.conf
 if [ -f "$config" ]; then
     source /etc/lzkm.conf
@@ -8,13 +8,11 @@ else
     lzkmconfig && source /etc/lzkm.conf
 fi
 
-options="--auto-close --auto-kill"
-
 #zenity --info
-ans=$(zenity --icon-name=icons8-linux-50 --info --title "Kernel Maintainer by Thomas R" --text \
- "Select a function" --extra-button="Sync" --extra-button="Build" --extra-button="Install" \
+ans=$(zenity --icon=icons8-linux-50 --info --title "Kernel Maintainer by Thomas R" --text \
+ "Select a function" --extra-button="Update-config" \
 --extra-button="Change Log" --extra-button="Reboot" --extra-button="Push" --extra-button="Sign-Kernel" \
---ok-label="Cancel" --extra-button="Update-config" --width 310);
+--extra-button="Install" --extra-button="Build" --extra-button="Sync" --ok-label="Cancel" --width 310);
 
 # Fetch latest commits
 Sync () { cd $tree && git pull $ksource $branch

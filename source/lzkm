@@ -9,10 +9,10 @@ else
 fi
 
 #zenity --info
-ans=$(zenity --icon=icons8-linux-50 --info --title "Kernel Maintainer by Thomas R" --text \
- "Select a function" --extra-button="Update-config" \
---extra-button="Change Log" --extra-button="Reboot" --extra-button="Push" --extra-button="Sign-Kernel" \
---extra-button="Install" --extra-button="Build" --extra-button="Sync" --ok-label="Cancel" --width 310);
+ans=$(zenity --icon=icons8-linux-50 --info --title "Kernel Maintainer by Thomas R" --text "Select a function" \
+--extra-button="Reboot" --extra-button="Update-config" --extra-button="Sign-Kernel" --extra-button="Push" \
+--extra-button="Change Log" --extra-button="Install" --extra-button="Build" --extra-button="Sync" \
+--ok-label="Cancel");
 
 # Fetch latest commits
 Sync () { cd $tree && git pull $ksource $branch

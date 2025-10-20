@@ -1,4 +1,6 @@
-0e34622 Thomas Raines 2025-10-18 v1.9
+26977d3 Thomas Raines 2025-10-20 1.9.1
+8087e4e Thomas Raines 2025-10-20 changelog.mk:Make 2nd run silent
+68597a4 Thomas Raines 2025-10-18 v1.9
 51e46d8 Thomas Raines 2025-10-18 Run changelog.mk twice IOT capture the latest commit correctly
 fa99749 Thomas Raines 2025-07-26 Rearrange more buttons.
 b9fe549 Thomas Raines 2025-07-19 v1.8

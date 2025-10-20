@@ -84,9 +84,9 @@ echo ${bldblu}${txtbld}Which update?${txtrst}
 read UPDATE
 git add -A
 git commit -m $UPDATE
-echo  Commiting. Please be patient
-git log --author="Thomas Raines" --pretty=format:"%h %an %ad %s" --date=short > CHANGELOG \
-&& git commit --amend  --no-edit
+echo  Running changelog a 2nd time to make sure we have the latest commit
+./changelog.mk
+git commit --amend --no-edit > /dev/null 2>&1 
 echo Clean tree?
     select yn in "yes" "no"; do
         case $yn in
